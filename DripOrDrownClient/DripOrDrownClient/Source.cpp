@@ -9,6 +9,8 @@ using namespace std;
 
 #define BUFSIZE 65536
 
+
+
 int _tmain(int argc, TCHAR* argv[])
 {
     HANDLE hPipe;
@@ -18,11 +20,12 @@ int _tmain(int argc, TCHAR* argv[])
     TCHAR  chBuf[BUFSIZE];
     BOOL   fSuccess = FALSE;
     DWORD  cbRead, cbToWrite, cbWritten, dwMode;
-    //LPCTSTR lpszPipename = TEXT("\\\\WIN-32I1UOBLC6F\\pipe\\jakepipe");
-    //LPCTSTR lpszPipename = TEXT("\\\\192.168.56.10\\pipe\\jakepipe");
 
-    LPCTSTR lpszPipename = TEXT("\\\\.\\pipe\\jakepipe");
+    std::wstring wide = L"\\\\" + std::wstring(argv[1]);
+    wide += L"\\pipe\\PowershellTransport";
 
+    LPCTSTR lpszPipename = wide.c_str();
+    
     // Try to open a named pipe; wait for it, if necessary. 
     while (1)
     {
@@ -43,7 +46,7 @@ int _tmain(int argc, TCHAR* argv[])
 
         // Exit if an error other than ERROR_PIPE_BUSY occurs. 
 
-        if (GetLastError() != ERROR_PIPE_BUSY)
+        if (GetLastError() != ERROR_PIPE_BUSY )
         {
             _tprintf(TEXT("Could not open pipe. GLE=%d\n"), GetLastError());
             return -1;

